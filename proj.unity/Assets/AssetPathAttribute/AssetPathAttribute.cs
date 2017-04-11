@@ -3,23 +3,8 @@ using UnityEngine;
 
 
 
-public class AssetPath
+public partial class AssetPath
 {
-    /// <summary>
-    /// A enum containing all the types of paths we can watch
-    /// </summary>
-    public enum Types
-    {
-        /// <summary>
-        /// The path will be contained within the 'Asset/*' directory.
-        /// </summary>
-        Project,
-        /// <summary>
-        /// The path will be contained within a resources folder.
-        /// </summary>
-        Resources,
-    }
-
     /// <summary>
     /// We limit this attributes to fields and only allow one. Should
     /// only be applied to string types. 
@@ -54,16 +39,5 @@ public class AssetPath
             m_Type = type; 
             m_PathType = Types.Project;
         }
-    }
-
-    /// <summary>
-    /// Takes the string from the Asset Path Attribute and converts it into
-    /// a usable path.
-    /// </summary>
-    /// <param name="assetPath"></param>
-    /// <returns></returns>
-    public string Convert(string assetPath)
-    {
-        return string.Empty;
     }
 }

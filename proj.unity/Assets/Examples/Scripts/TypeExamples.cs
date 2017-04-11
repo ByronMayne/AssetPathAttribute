@@ -31,4 +31,18 @@ public class TypeExamples : ScriptableObject
 
     [AssetPath.Attribute(typeof(UnityEngine.UI.Image))]
     public string m_UIImage;
+
+    public void ConvertExample()
+    {
+        string resourcesPath = AssetPath.ConvertToResourcesPath(m_UIImage);
+    }
+
+    [AssetPath.Attribute(typeof(GameObject))]
+    public string m_PlayerPrefab;
+
+    public void CreatePlayer()
+    {
+        // Converts our path to a resources path and then loads the object.
+        GameObject player = AssetPath.Load<GameObject>(m_PlayerPrefab);
+    }
 }

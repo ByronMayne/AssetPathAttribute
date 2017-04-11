@@ -44,9 +44,39 @@ public class ValueExample : ScriptableObject
 
   ![](./images/SupportedTypes.png)
 
+ ## Helper Functions
+ When working with Asset Path Attribute it store all paths as project paths i.e all start at the base `Assets/` folder. In terms of runtime this is not useful to you since to load objects they need to be in a `Resources` folder. To convert a Project Path to a Resources path you can use the following.
+ ```csharp
+ public class UIManager
+ {
+    [AssetPath.Attribute(typeof(UnityEngine.UI.Image))]
+    public string m_UIImage;
+
+    public void ConvertExample()
+    {
+        // Takes a path from 'Assets/Resources/Player/PlayerIcon.prefab'
+        // and converts it to `Player/PlayerIcon.prefab'
+        string resourcesPath = AssetPath.ConvertToResourcesPath(m_UIImage);
+    }
+ }
+ ```
+
+ You can then go ahead and load the asset using `Resources.Load<T>(string path)` There is a second function that you can also use that will load the object for you.
+ ```csharp
+[AssetPath.Attribute(typeof(GameObject))]
+public string m_PlayerPrefab;
+
+public void CreatePlayer()
+{
+    // Converts our path to a resources path and then loads the object.
+    GameObject player = AssetPath.Load<GameObject>(m_PlayerPrefab);
+}
+ ```
+ The advantage of using this function is it's much cleaner and also in the Editor if the object could not be find in a Resources folder an attempt to load it using `AssetDatabase.Load(string path)`. This is really useful for any editor windows that might be using AssetPathAttribute. 
+
+
  ## TODO:
  * Validate that the type sent in to `AssetPath.Attributes` constructor is serializable. Display a error string if it's not.
- * Add a function to convert an asset path from a full path to a relative one to the resources folder. 
 
  
 ## Meta
