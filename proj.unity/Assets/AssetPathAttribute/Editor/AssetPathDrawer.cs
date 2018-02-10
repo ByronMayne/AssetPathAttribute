@@ -36,6 +36,7 @@ public class AssetPathDrawer : PropertyDrawer
     /// <param name="label">The nice display label it has</param>
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        property = GetProperty(property);
         if (property.propertyType != SerializedPropertyType.String)
         {
             // Create a rect for our label
@@ -80,19 +81,30 @@ public class AssetPathDrawer : PropertyDrawer
         // An empty filter
         string searchFilter = string.Empty;
         // Make a control ID
-        m_PickerControlID = EditorGUIUtility.GetControlID(s_PPtrHash, FocusType.Native, position);
+        m_PickerControlID = GUIUtility.GetControlID(s_PPtrHash, FocusType.Passive, position);
         // Save our property path
         // Invoke it (We have to do this step since there is only a generic version for showing the asset picker.
         genericObjectPickerMethod.Invoke(null, new object[] { target, allowSceneObjects, searchFilter, m_PickerControlID });
     }
 
+    protected virtual SerializedProperty GetProperty(SerializedProperty rootProperty)
+    {
+        return rootProperty;
+    }
 
+
+    protected virtual Type ObjectType()
+    {
+        // Get our attribute
+        AssetPath.Attribute attribute = this.attribute as AssetPath.Attribute;
+        // Return back the type.
+        return attribute.type;
+    }
 
     private void HandleObjectReference(Rect position, SerializedProperty property, GUIContent label)
     {
 
-        // Get our attribute
-        AssetPath.Attribute attribute = this.attribute as AssetPath.Attribute;
+        Type objectType = ObjectType();
         // First get our value
         Object propertyValue = null;
         // Save our path
@@ -109,7 +121,7 @@ public class AssetPathDrawer : PropertyDrawer
         if (propertyValue == null && !string.IsNullOrEmpty(assetPath))
         {
             // Try to load our asset
-            propertyValue = AssetDatabase.LoadAssetAtPath(assetPath, attribute.type);
+            propertyValue = AssetDatabase.LoadAssetAtPath(assetPath, objectType);
 
             if (propertyValue == null)
             {
@@ -124,28 +136,15 @@ public class AssetPathDrawer : PropertyDrawer
         EditorGUI.BeginChangeCheck();
         {
             // Draw our object field.
-            propertyValue = EditorGUI.ObjectField(position, label, propertyValue, attribute.type, false);
+            propertyValue = EditorGUI.ObjectField(position, label, propertyValue, objectType, false);
         }
         if (EditorGUI.EndChangeCheck())
         {
             OnSelectionMade(propertyValue, property);
         }
-
-        /* 
-         * Right now missing is really hard to set up in terms of styling. I would have to 
-         * recreate the whole ObjectField by hand. Was unable to find a simple functions after
-         * diving into the Unity source.
-        if(isMissing)
-        {
-            Rect missingRect = position;
-            missingRect.x += EditorGUIUtility.labelWidth;
-            missingRect.width -= EditorGUIUtility.labelWidth + 16;
-            GUI.Label(missingRect, m_MissingAssetLabel, EditorStyles.textField);
-        }
-        */
     }
 
-    private void OnSelectionMade(Object newSelection, SerializedProperty property)
+    protected virtual void OnSelectionMade(Object newSelection, SerializedProperty property)
     {
         string assetPath = string.Empty;
 

@@ -39,5 +39,22 @@ public partial class AssetPath
             m_Type = type; 
             m_PathType = Types.Project;
         }
+
+
+
+        public string SuperProperty
+        {
+            get
+            {
+                /* whole pile of work done here */
+                return "Complex string example"; 
+            }
+        }
+
+        public void Evulate()
+        {
+
+            string value = SuperProperty; 
+        }
     }
 }
