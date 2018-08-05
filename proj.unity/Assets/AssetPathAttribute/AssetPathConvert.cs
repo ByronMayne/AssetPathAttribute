@@ -38,6 +38,9 @@ public partial class AssetPath
         // Calculate the full length of our substring 
         int length = projectPath.Length - folderIndex;
 
+        // Get extension length
+        length -= projectPath.Length - projectPath.LastIndexOf('.');
+
         // Get the substring
         string resourcesPath = projectPath.Substring(folderIndex, length);
 
